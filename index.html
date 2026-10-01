@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRITICAL SYSTEM ERROR</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#000;
+  color:#ff1d1d;
+  font-family:Consolas,monospace;
+  overflow:hidden;
+}
+
+.noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,0,0,.035) 3px
+  );
+}
+
+main{
+  width:min(900px,92%);
+  margin:5vh auto;
+}
+
+.warning{
+  border:2px solid red;
+  padding:22px;
+  box-shadow:
+    0 0 15px red,
+    inset 0 0 30px #400;
+  animation:shake .15s infinite;
+}
+
+h1{
+  font-size:clamp(28px,7vw,65px);
+  text-align:center;
+  margin:0;
+  text-shadow:
+    3px 0 red,
+    -3px 0 #600;
+  animation:glitch .25s infinite;
+}
+
+.subtitle{
+  text-align:center;
+  color:white;
+  font-size:18px;
+}
+
+#terminal{
+  margin-top:25px;
+  height:260px;
+  padding:15px;
+  overflow:hidden;
+  background:#030000;
+  border:1px solid #6d0000;
+  color:#ff4949;
+  line-height:1.5;
+}
+
+.danger{
+  color:#fff;
+  background:#a00000;
+  padding:2px 6px;
+}
+
+.bar{
+  margin-top:20px;
+  height:24px;
+  border:2px solid red;
+  padding:3px;
+}
+
+#progress{
+  height:100%;
+  width:0%;
+  background:red;
+  box-shadow:0 0 15px red;
+}
+
+#status{
+  margin-top:10px;
+  color:white;
+}
+
+#countdown{
+  text-align:center;
+  font-size:35px;
+  color:red;
+  margin-top:15px;
+}
+
+.flash{
+  animation:flash .15s;
+}
+
+@keyframes glitch{
+  0%{transform:translate(0)}
+  25%{transform:translate(2px,-1px)}
+  50%{transform:translate(-2px,1px)}
+  75%{transform:translate(1px,2px)}
+}
+
+@keyframes shake{
+  0%,100%{transform:translate(0)}
+  50%{transform:translate(1px,0)}
+}
+
+@keyframes flash{
+  50%{background:#4b0000}
+}
+
+#jumpscare{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#b00000;
+  color:white;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  z-index:10;
+  font-size:clamp(30px,8vw,90px);
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="noise"></div>
+
+<main>
+<div class="warning">
+
+<h1>⚠ CRITICAL ERROR ⚠</h1>
+
+<p class="subtitle">
+UNEXPECTED SYSTEM ACTIVITY DETECTED
+</p>
+
+<div id="terminal"></div>
+
+<div class="bar">
+  <div id="progress"></div>
+</div>
+
+<div id="status">
+SYSTEM ANALYSIS: 0%
+</div>
+
+<div id="countdown">
+00:15
+</div>
+
+</div>
+</main>
+
+<div id="jumpscare">
+<div>
+⚠ SYSTEM FAILURE ⚠
+<br>
+<span style="font-size:20px">
+PLEASE WAIT...
+</span>
+</div>
+</div>
+
+<script>
+
+const terminal =
+document.getElementById("terminal");
+
+const progress =
+document.getElementById("progress");
+
+const status =
+document.getElementById("status");
+
+const logs = [
+"[BOOT] Emergency diagnostic started...",
+"[SYSTEM] Reading system information...",
+"[SCAN] Searching active processes...",
+"[SCAN] Analyzing browser environment...",
+"[WARNING] Abnormal response detected.",
+"[SCAN] Verifying system integrity...",
+"[ERROR] Verification failed.",
+"[WARNING] Unknown process signature.",
+"[SYSTEM] Attempting recovery...",
+"[ERROR] Recovery interrupted.",
+"[ALERT] Multiple anomalies detected.",
+"[SYSTEM] Starting emergency procedure..."
+];
+
+let logIndex=0;
+
+function writeLog(){
+
+ if(logIndex >= logs.length) return;
+
+ let text=logs[logIndex];
+
+ if(
+ text.includes("ERROR") ||
+ text.includes("WARNING") ||
+ text.includes("ALERT")
+ ){
+   text =
+   '<span class="danger">'+text+'</span>';
+ }
+
+ terminal.innerHTML += text+"<br>";
+
+ terminal.scrollTop =
+ terminal.scrollHeight;
+
+ logIndex++;
+
+ setTimeout(
+   writeLog,
+   350+Math.random()*550
+ );
+}
+
+writeLog();
+
+
+let scan=0;
+
+const scanner=setInterval(()=>{
+
+ scan += Math.floor(Math.random()*5)+1;
+
+ if(scan>=99){
+   scan=99;
+   clearInterval(scanner);
+ }
+
+ progress.style.width=scan+"%";
+
+ status.innerHTML =
+ "SYSTEM ANALYSIS: "+scan+"%";
+
+ if(Math.random()>.75){
+   document.body.classList.add("flash");
+
+   setTimeout(()=>{
+     document.body.classList.remove("flash");
+   },120);
+ }
+
+},160);
+
+
+let time=15;
+
+const timer=setInterval(()=>{
+
+ time--;
+
+ document.getElementById("countdown")
+ .textContent =
+ "00:"+String(time).padStart(2,"0");
+
+ if(time<=0){
+
+   clearInterval(timer);
+
+   const jump =
+   document.getElementById("jumpscare");
+
+   jump.style.display="flex";
+
+   setTimeout(()=>{
+
+     document.body.innerHTML=`
+       <div style="
+       min-height:100vh;
+       display:flex;
+       align-items:center;
+       justify-content:center;
+       background:#000;
+       color:white;
+       font-family:Arial;
+       text-align:center;
+       padding:30px">
+
+       <div>
+       <div style="font-size:70px">😹</div>
+
+       <h1 style="color:#42ff72">
+       PRANK!
+       </h1>
+
+       <h2>AMAN, WOI 😭</h2>
+
+       <p style="color:#aaa">
+       Tidak ada virus dan tidak ada file yang
+       diubah atau diambil.
+       </p>
+
+       </div>
+       </div>
+     `;
+
+   },1700);
+ }
+
+},1000);
+
+</script>
+
+</body>
+</html>
